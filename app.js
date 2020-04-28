@@ -3,16 +3,16 @@ let keysUpper = $('#keyboard-upper-container');
 let sentences = ['ten ate neite ate nee enet ite ate inet ent eate', 'Too ato too nOt enot one totA not anot tOO aNot', 'oat itain oat tain nate eate tea anne inant nean', 'itant eate anot eat nato inate eat anot tain eat', 'nee ene ate ite tent tiet ent ine ene ete ene ate'];
 let sentencesIndex = 0;
 let letterIndex = 0;
-//index position
+let totalWords = 54
 let currentSentence = sentences[sentencesIndex];
 let currentLetter = currentSentence[letterIndex];
-//actual value of letter
+let mistakes = 0;
+let startTime = Date.now()
+
+
 $('#sentence').append(currentSentence);
 $('#target-letter').append(currentLetter);
-let letterValue = currentSentence.charCodeAt(0);
-console.log(letterValue);
-//console.log(value.keyCode(currentLetter));
-//trying to log keyCode of current letter
+
 keysUpper.hide();
 
 
@@ -22,17 +22,40 @@ $('body').keypress(function (event) {
         $('#feedback').append('<div class="glyphicon glyphicon-ok"></div>');
     }
     else {
-        $('#feedback').append('<div class="glyphicon glyphicon-remove"></div>');    }
+        $('#feedback').append('<div class="glyphicon glyphicon-remove"></div>');
+        mistakes++;
+    }
     letterIndex++;
     currentLetter = currentSentence[letterIndex];
     $('#target-letter').text(currentLetter);
-    $('#yellow-block').css('margin-left','+=17.5px');
+    $('#yellow-block').css('margin-left', '+=17.5px');
 
-
-
-
+    if (letterIndex === currentSentence.length) {
+        sentencesIndex++;
+        if (sentencesIndex === sentences.length) {
+            $('body').off();
+            let endTime = Date.now();
+            let minutes = ((endTime - startTime) / 60000);
+            let Wpm = Math.floor(totalWords / minutes - 2 * mistakes)
+            $('.glyphicon').remove();
+            let results = ('Congrats! You typed ' + (Wpm) + ' words per minute.')
+            $('#feedback').append(results)
+            $('#feedback').append('<button class="btn btn-info">Play Again</button>')
+            $('.btn').on();
+            $('.btn').click(function () {
+                location.reload();
+            })
+            return;
+        }
+        currentSentence = sentences[sentencesIndex];
+        $('#sentence').text(currentSentence);
+        letterIndex = 0;
+        currentLetter = currentSentence[letterIndex];
+        $('#target-letter').text(currentLetter);
+        $('#yellow-block').css('margin-left', '0')
+        $('.glyphicon').remove();
+    };
 });
-
 
 $('body').keydown(function (event) {
     if (event.keyCode === 16) {
@@ -49,28 +72,3 @@ $('body').keyup(function (event) {
     }
     $('.highlight').removeClass('highlight');
 });
-
-
-//$('#' + event.keyCode).removeClass('highlight');
-
-//input and log what is typed and clear the input field
-// $('[type="submit"]').click(function (event) {
-//     event.preventDefault();
-//     let inputVal = $('[type="text"]').val();
-//     console.log(inputVal);
-//     $('[type="text"]').val('');
-// })
-
-//console.log(name.charCodeAt());
-//charCodeAt(index position)
-
-//to make sentences change?
-//if current letter is == sentence lenght
-//function ++ current sentence
-//at end of sentence console log switch
-
-//to check if typed letter is correct?
-//if typed letter == charCodeAt(currentletter)
-//true == green check
-//false == red x
-//current letter++
